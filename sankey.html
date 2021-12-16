@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sankey</title>
+    <script type="text/javascript" src="./js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="./js/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="main" style="width: 1200px; height: 600px; border: solid 2px red;"></div>
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+
+        $.get('./resource/energy.json', function (data) {
+            myChart.setOption(option = {
+                title: {
+                    text: 'Sankey Diagram'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    triggerOn: 'mousemove'
+                },
+                series: [
+                    {
+                        type: 'sankey',
+                        data: data.nodes,
+                        links: data.links,
+                        focusNodeAdjacency: 'allEdges',
+                        itemStyle: {
+                            borderWidth: 1,
+                            borderColor: '#aaa'
+                        },
+                        lineStyle: {
+                            color: 'source',
+                            curveness: 0.5
+                        },
+                        label: {
+                            show: true,
+                            formatter: '{b}: {c}',
+                            formatter: function (params) {
+                                console.log(params);
+                                var val = 0;
+                                for (var i = 0; i < data.links.length; i++) {
+                                    if (data.links[i].source == params.data.name) {
+                                        val += data.links[i].value;
+                                    }
+                                }
+                                return params.data.name + "\n" + val;
+                            }
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</body>
+
+</html>
